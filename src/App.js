@@ -78,58 +78,66 @@ function App() {
 
   const fetchData = async () => {
     try {
-      console.log('Fetching subscriber count...');
-      const subscriberResponse = await window.gapi.client.youtube.channels.list({
-        part: 'statistics',
-        mine: true,
-      });
+        console.log('Fetching subscriber count...');
+        const subscriberResponse = await window.gapi.client.youtube.channels.list({
+            part: 'statistics',
+            mine: true,
+        });
 
-      console.log('Subscriber Response:', subscriberResponse);
-      if (!subscriberResponse.result.items || subscriberResponse.result.items.length === 0) {
-        throw new Error('No channel data found. Ensure the authenticated account has a YouTube channel.');
-      }
+        if (!subscriberResponse.result.items || subscriberResponse.result.items.length === 0) {
+            throw new Error('No channel data found. Ensure the authenticated account has a YouTube channel.');
+        }
 
-      const subscriberCount = parseInt(
-        subscriberResponse.result.items[0].statistics.subscriberCount,
-        10
-      );
+        const subscriberCount = parseInt(
+            subscriberResponse.result.items[0].statistics.subscriberCount,
+            10
+        );
 
-      console.log('Fetching subscriber growth rate...');
-      const analyticsResponse = await window.gapi.client.youtubeAnalytics.reports.query({
-        ids: 'channel==MINE',
-        metrics: 'subscribersGained',
-        dimensions: 'day',
-        startDate: '2023-01-01',
-        endDate: new Date().toISOString().split('T')[0],
-      });
+        console.log('Fetching subscriber growth rate...');
+        
+        // Use last 30 days as the date range
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - 30); // 30 days ago
+        const analyticsResponse = await window.gapi.client.youtubeAnalytics.reports.query({
+            ids: 'channel==MINE',
+            metrics: 'subscribersGained',
+            dimensions: 'day',
+            startDate: startDate.toISOString().split('T')[0],
+            endDate: new Date().toISOString().split('T')[0],
+        });
 
-      console.log('Analytics Response:', analyticsResponse);
-      if (!analyticsResponse.result.rows || analyticsResponse.result.rows.length === 0) {
-        throw new Error('No analytics data found. Ensure the channel has sufficient data.');
-      }
+        if (!analyticsResponse.result.rows || analyticsResponse.result.rows.length === 0) {
+            throw new Error('No analytics data found. Ensure the channel has sufficient data.');
+        }
 
-      const totalSubscribersGained = analyticsResponse.result.rows.reduce(
-        (total, row) => total + row[1],
-        0
-      );
-      const avgDailyGrowth = totalSubscribersGained / analyticsResponse.result.rows.length;
+        const totalSubscribersGained = analyticsResponse.result.rows.reduce(
+            (total, row) => total + row[1],
+            0
+        );
+        const avgDailyGrowth = totalSubscribersGained / analyticsResponse.result.rows.length;
 
-      const remainingSubscribers = 100000 - subscriberCount;
-      const estimatedDays = Math.ceil(remainingSubscribers / avgDailyGrowth);
-      const years = Math.floor(estimatedDays / 365);
-      const months = Math.floor((estimatedDays % 365) / 30);
-      const days = (estimatedDays % 365) % 30;
+        if (avgDailyGrowth <= 0) {
+            setCountdown('Growth rate too low to estimate.');
+            setLoading(false);
+            return;
+        }
 
-      setCountdown(
-        `You will reach 100K subscribers in ${years} years, ${months} months, and ${days} days.`
-      );
-      setLoading(false);
+        const remainingSubscribers = 100000 - subscriberCount;
+        const estimatedDays = Math.ceil(remainingSubscribers / avgDailyGrowth);
+        const years = Math.floor(estimatedDays / 365);
+        const months = Math.floor((estimatedDays % 365) / 30);
+        const days = (estimatedDays % 365) % 30;
+
+        setCountdown(
+            `You will reach 100K subscribers in: ${years} years, ${months} months, and ${days} days.`
+        );
+        setLoading(false);
     } catch (error) {
-      console.error('Error fetching data:', error);
-      setCountdown('Failed to fetch data. Please try again later.');
-      setLoading(false);
+        console.error('Error fetching data:', error);
+        setCountdown('Failed to fetch data. Please try again later.');
+        setLoading(false);
     }
-  };
+};
 
   return (
     <div className="App">
