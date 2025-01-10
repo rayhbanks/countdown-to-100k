@@ -128,9 +128,12 @@ function App() {
         const months = Math.floor((estimatedDays % 365) / 30);
         const days = (estimatedDays % 365) % 30;
 
-        setCountdown(
-            `You will reach 100K subscribers in: ${years} years, ${months} months, and ${days} days.`
-        );
+    setCountdown(
+    <>
+        <div>You will reach 100K subscribers in:</div>
+        <div id="estimate">{`${years} years, ${months} months, and ${days} days`}</div>
+    </>
+);
         setLoading(false);
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -139,51 +142,55 @@ function App() {
     }
 };
 
-  return (
-    <div className="App">
-      {/* Image Always Visible */}
-      <img
-        src="silver-play-button.jpg"
-        alt="YouTube 100K Silver Play Button"
-        className="play-button"
-        style={{ margin: '20px auto', display: 'block', maxWidth: '300px' }}
-      />
-      {!countdown && (
-        <header className="App-header">
-          <h1>Countdown to 100K</h1>
-          <p>
-            This app helps you estimate how long it will take to
-            reach <br />100,000 subscribers on YouTube using your current growth rate.
-          </p>
-          <p>
-            The app is currently only available to test users.<br />
-            Please message me on{' '}
-            <a href="https://linkedin.com/in/banksray" rel="nofollow noreferrer" target="_blank">
-              LinkedIn
-            </a>{' '}
-            if you want to try it out!
-          </p>
-        </header>
-      )}
-      {countdown ? (
-        <div>
-          <h2>{countdown}</h2>
-        </div>
-      ) : (
-        <div>
-          <button onClick={handleAuthClick} disabled={loading}>
-            {loading ? 'Loading...' : 'Connect to YouTube'}
-          </button>
-        </div>
-      )}
-      <footer style={{ marginTop: '30px', textAlign: 'center', fontSize: '0.9rem' }}>
+return (
+  <div className="App">
+    {/* Image Always Visible */}
+    <img
+      src="silver-play-button.jpg"
+      alt="YouTube 100K Silver Play Button"
+      className="play-button"
+      style={{ margin: '20px auto', display: 'block', maxWidth: '300px' }}
+    />
+    {!countdown && (
+      <header className="App-header">
+        <h1>Countdown to 100K</h1>
         <p>
-          <a href="/countdown-to-100k/terms-of-service.html">Terms of Service</a> |{' '}
-          <a href="/countdown-to-100k/privacy-policy.html">Privacy Policy</a>
+          Click to find out how long until you reach <br />100,000 subscribers on YouTube!
         </p>
-      </footer>
-    </div>
-  );
-}
+      </header>
+    )}
+    {countdown ? (
+      <div>
+        <h2>{countdown}</h2>
+      </div>
+    ) : (
+      <div>
+        <button onClick={handleAuthClick} disabled={loading}>
+          {loading ? 'Loading...' : 'Connect to YouTube'}
+        </button>
+      </div>
+    )}
 
+    {/* Conditionally Render Message and Footer */}
+    {!countdown && (
+      <>
+        <p>
+          The app is currently only available to test users.<br />
+          Please{' '}
+          <a href="https://linkedin.com/in/banksray" rel="nofollow noreferrer" target="_blank">
+            message me
+          </a>{' '}
+          if you want to try it out!
+        </p>
+        <footer style={{ marginTop: '30px', textAlign: 'center', fontSize: '0.9rem' }}>
+          <p>
+            <a href="/countdown-to-100k/terms-of-service.html">Terms of Service</a> |{' '}
+            <a href="/countdown-to-100k/privacy-policy.html">Privacy Policy</a>
+          </p>
+        </footer>
+      </>
+    )}
+  </div>
+);
+}
 export default App;
