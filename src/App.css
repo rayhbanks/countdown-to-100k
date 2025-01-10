@@ -57,7 +57,7 @@ button {
 }
 
 button:hover {
-  background: #b30000; /* Darker red on hover */
+  background: #ff0505; /* Bright red on hover */
   transform: scale(1.05);
 }
 

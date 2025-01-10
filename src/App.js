@@ -155,7 +155,7 @@ return (
       <header className="App-header">
         <h1>Countdown to 100K</h1>
         <p>
-          Click to find out how long until you reach <br />100,000 subscribers on YouTube!
+          How long until you reach 100K subscribers? <br />Click the button below to find out!
         </p>
       </header>
     )}
@@ -175,10 +175,10 @@ return (
     {!countdown && (
       <>
         <p>
-          The app is currently only available to test users.<br />
+          This app is currently only available to test users.<br />
           Please{' '}
           <a href="https://linkedin.com/in/banksray" rel="nofollow noreferrer" target="_blank">
-            message me
+            contact me
           </a>{' '}
           if you want to try it out!
         </p>
